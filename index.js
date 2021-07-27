@@ -90,6 +90,94 @@ Bookman.get("/books/author/:authorID", (request, response) => {
 });
 
 /*
+Route           /books/new
+Description     to post new book 
+Access          PUBLIC
+Parameters      NONE
+Method          POST
+*/
+Bookman.post("/books/new", (request, response) => {
+    const { newBook } = request.body;
+
+    // inserting newBook data into database.books array
+    database.books.push(newBook);
+
+    return response.json({ books: database.books, message: "Book was added." });
+});
+
+/*
+Route           /books/update
+Description     to update book details(title)
+Access          PUBLIC
+Parameters      isbn
+Method          PUT
+*/
+// NOTE: Had faced a horrible bug with this little devil.
+Bookman.put("/books/update/:isbn", async (request, response) => {
+    // console.log("New Array.");
+
+    database.books.forEach((book) => {
+        if (book.ISBN === request.params.isbn) {
+            book.title = request.body.updatedBookTitle;
+            return book;
+        }
+
+        // error handling
+        else {
+            return book;
+        }
+    });
+
+    // console.log(newArray);
+
+    return response.json({
+        books: database.books,
+        message: "Book title was updated.",
+    });
+});
+
+/*
+Route           /books/author/update
+Description     to update/add new author 
+Access          PUBLIC
+Parameters      isbn
+Method          PUT
+*/
+Bookman.put("/books/author/update/:isbn", async (request, response) => {
+    // update the book database
+    database.books.forEach((book) => {
+        if (book.ISBN === request.params.isbn) {
+            book.authors.push(request.body.updatedAuthors);
+            return book;
+        } else {
+            return book;
+        }
+    });
+
+    // update the author database
+    database.authors.forEach((author) => {
+        if (author.id === request.body.updatedAuthors) {
+            author.books.push(request.params.isbn);
+            return author;
+        } else {
+            return author;
+        }
+    });
+
+    return response.json({
+        books: database.books,
+        authors: database.authors,
+        message: "Author was updated.",
+    });
+});
+
+// .
+
+// .
+
+// .
+
+/*
 Route           /authors
 Description     to get all authors
 Access          PUBLIC
@@ -147,6 +235,54 @@ Bookman.get("/authors/book/:bookISBN", (request, response) => {
 });
 
 /*
+Route           /authors/new
+Description     to post new author 
+Access          PUBLIC
+Parameters      NONE
+Method          POST
+*/
+Bookman.post("/authors/new", (request, response) => {
+    const { newAuthor } = request.body;
+
+    // inserting newAuthor data into database.authors array
+    database.authors.push(newAuthor);
+
+    return response.json({
+        authors: database.authors,
+        message: "Author was added.",
+    });
+});
+
+/*
+Route           /authors/update
+Description     to update author details(name)
+Access          PUBLIC
+Parameters      author-id
+Method          PUT
+*/
+Bookman.put("/authors/update/:authorID", async (request, response) => {
+    database.authors.forEach((author) => {
+        if (String(author.id) === request.params.authorID) {
+            author.name = request.body.UpdateAuthorName;
+            return author;
+        } else {
+            return author;
+        }
+    });
+
+    return response.json({
+        authors: database.authors,
+        message: "Author name was updated.",
+    });
+});
+
+// .
+
+// .
+
+// .
+
+/*
 Route           /publications
 Description     to get all publications
 Access          PUBLIC
@@ -201,6 +337,91 @@ Bookman.get("/publications/book/:bookISBN", (request, response) => {
 
     return response.json({ publication: getSpecificPublicationByBook });
 });
+
+/*
+Route           /publications/new
+Description     to post new publication
+Access          PUBLIC
+Parameters      NONE
+Method          POST
+*/
+Bookman.post("/publications/new", (request, response) => {
+    const { newPublication } = request.body;
+
+    // inserting newPublication data into database.publications array
+    database.publications.push(newPublication);
+
+    return response.json({
+        publications: database.publications,
+        message: "Publication was added.",
+    });
+});
+
+/*
+Route           /publications/update
+Description     to update publications details(name)
+Access          PUBLIC
+Parameters      publication-id
+Method          PUT
+*/
+Bookman.put(
+    "/publications/update/:publicationID",
+    async (request, response) => {
+        database.publications.forEach((publication) => {
+            if (String(publication.id) === request.params.publicationID) {
+                publication.name = request.body.UpdatePublicationName;
+                return publication;
+            } else {
+                return publication;
+            }
+        });
+
+        return response.json({
+            publications: database.publications,
+            message: "Publication name was updated.",
+        });
+    }
+);
+
+/*
+Route           /publications/book/update
+Description     to update/add new book to a publication
+Access          PUBLIC
+Parameters      publication-id
+Method          PUT
+*/
+Bookman.put(
+    "/publications/book/update/:publicationID",
+    async (request, response) => {
+        // update publication database
+        database.publications.forEach((publication) => {
+            if ((String(publication.id) === request.params.publicationID) && (publication.books.includes(request.body.publicationBookISBN) == false)) {
+                return publication.books.push(request.body.publicationBookISBN);
+                
+            } else {
+                return publication;
+            }
+        });
+
+        // update book database
+        database.books.forEach((book) => {
+            if (book.ISBN === request.body.publicationBookISBN) {
+                book.publication = request.params.publicationID;
+                return book;
+            } else {
+                return book;
+            }
+        });
+
+        return response.json({
+            publications: database.publications,
+            books: database.books,
+            message: "Book was added to publication.",
+        });
+    }
+);
+
+// .
 
 // .
 
