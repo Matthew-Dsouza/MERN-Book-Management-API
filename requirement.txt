@@ -1,0 +1,41 @@
+Requirements
+
+We are a company that handles book publications
+
+Book
+ISBN, Title, Author[], Language, Publish Date, No. of pages, Category[]
+
+Authors
+Name, ID, Books[]
+
+Publications
+Name, ID, Books[]
+
+----------------------------------
+
+Requirements
+
+
+Book
+
+We need an API 
+to get all books ✅
+to get specific book based on ISBN✅
+to get a list of books based on category ✅
+to get a list of books based on author ✅
+
+
+Author
+
+We need an API
+to get all authors ✅
+to get specific author based on author id ✅
+to get a list of authors based on book ✅
+
+
+Publication
+
+We need an API
+to get all publications ✅
+to get specific publication based on publication id ✅
+to get a specific publication based on book ✅
