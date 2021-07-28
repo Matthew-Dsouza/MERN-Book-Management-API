@@ -364,9 +364,7 @@ Access          PUBLIC
 Parameters      publication-id
 Method          PUT
 */
-Bookman.put(
-    "/publications/update/:publicationID",
-    async (request, response) => {
+Bookman.put("/publications/update/:publicationID", async (request, response) => {
         database.publications.forEach((publication) => {
             if (String(publication.id) === request.params.publicationID) {
                 publication.name = request.body.UpdatePublicationName;
@@ -387,28 +385,32 @@ Bookman.put(
 Route           /publications/book/update
 Description     to update/add new book to a publication
 Access          PUBLIC
-Parameters      publication-id
+Parameters      isbn
 Method          PUT
 */
-Bookman.put(
-    "/publications/book/update/:publicationID",
-    async (request, response) => {
+Bookman.put("/publications/book/update/:bookISBN", async (request, response) => {
         // update publication database
         database.publications.forEach((publication) => {
-            if ((String(publication.id) === request.params.publicationID) && (publication.books.includes(request.body.publicationBookISBN) == false)) {
-                return publication.books.push(request.body.publicationBookISBN);
-                
-            } else {
+            if ((publication.id === request.body.updatedPublicationID) && (publication.books.includes(request.params.bookISBN) == false)) 
+            {
+                publication.books.push(request.params.bookISBN);
+                return publication;
+            } 
+            else 
+            {
                 return publication;
             }
         });
 
         // update book database
         database.books.forEach((book) => {
-            if (book.ISBN === request.body.publicationBookISBN) {
-                book.publication = request.params.publicationID;
+            if (book.ISBN === request.params.bookISBN) 
+            {
+                book.publication = request.body.updatedPublicationID;
                 return book;
-            } else {
+            } 
+            else 
+            {
                 return book;
             }
         });
@@ -416,7 +418,7 @@ Bookman.put(
         return response.json({
             publications: database.publications,
             books: database.books,
-            message: "Book was added to publication.",
+            message: "Book Publication was updated.",
         });
     }
 );
