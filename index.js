@@ -7,12 +7,13 @@ const express = require("express");
 const mongoose = require("mongoose");
 
 // database
-const database = require("./database/index");
+// CODE: before mongoDB
+// const database = require("./database/index");
 
 // models
-const BookModels = require("./database/book");
-const AuthorModels = require("./database/author");
-const PublicationModels = require("./database/publication");
+const BookModel = require("./database/book");
+const AuthorModel = require("./database/author");
+const PublicationModel = require("./database/publication");
 
 // initialize express
 const Bookman = express();
@@ -37,8 +38,13 @@ Access          PUBLIC
 Parameters      NONE
 Method          GET
 */
-Bookman.get("/books", (request, response) => {
-    return response.json({ books: database.books });
+Bookman.get("/books", async (request, response) => {
+    const getAllBooks = await BookModel.find();
+
+    // CODE: before mongoDB
+    // return response.json({ books: database.books });
+
+    return response.json({ books: getAllBooks });
 });
 
 /*
@@ -48,13 +54,18 @@ Access          PUBLIC
 Parameters      isbn
 Method          GET
 */
-Bookman.get("/books/id/:isbn", (request, response) => {
-    const getSpecificBook = database.books.filter(
-        (book) => book.ISBN === request.params.isbn
-    );
+Bookman.get("/books/id/:isbn", async (request, response) => {
+    const getSpecificBook = await BookModel.findOne({
+        ISBN: request.params.isbn,
+    });
+
+    // CODE: before mongoDB
+    // const getSpecificBook = await database.books.filter(
+    //     (book) => book.ISBN === request.params.isbn
+    // );
 
     // error handling if book is not found
-    if (getSpecificBook.length === 0) {
+    if (!getSpecificBook) {
         return response.json({
             error: `No book found for ISBN of ${request.params.isbn}`,
         });
@@ -70,14 +81,18 @@ Access          PUBLIC
 Parameters      category
 Method          GET
 */
-Bookman.get("/books/category/:category", (request, response) => {
-    const getSpecificBooksByCategory = database.books.filter(
-        (book) => book.categories.includes(request.params.category)
-        // book.categories === request.params.category;
-    );
+Bookman.get("/books/category/:category", async (request, response) => {
+    const getSpecificBooksByCategory = await BookModel.findOne({
+        categories: request.params.category,
+    });
+
+    // CODE: before mongoDB
+    // const getSpecificBooksByCategory = database.books.filter(
+    //     (book) => book.categories.includes(request.params.category)
+    // );
 
     // error handling if book is not found
-    if (getSpecificBooksByCategory.length === 0) {
+    if (!getSpecificBooksByCategory) {
         return response.json({
             error: `No book found for category of ${request.params.category}`,
         });
@@ -115,13 +130,17 @@ Access          PUBLIC
 Parameters      NONE
 Method          POST
 */
-Bookman.post("/books/new", (request, response) => {
+Bookman.post("/books/new", async (request, response) => {
     const { newBook } = request.body;
 
+    // CODE: before mongoDB
     // inserting newBook data into database.books array
-    database.books.push(newBook);
+    // database.books.push(newBook);
 
-    return response.json({ books: database.books, message: "Book was added." });
+    const addNewBook = BookModel.create(newBook);
+
+    // return response.json({ books: database.books, message: "Book was added." });
+    return response.json({ message: "New Book was added." });
 });
 
 /*
@@ -277,8 +296,11 @@ Access          PUBLIC
 Parameters      NONE
 Method          GET
 */
-Bookman.get("/authors", (request, response) => {
-    return response.json({ authors: database.authors });
+Bookman.get("/authors", async (request, response) => {
+    const getAllAuthors = await AuthorModel.find();
+
+    // return response.json({ authors: database.authors });
+    return response.json({ authors: getAllAuthors });
 });
 
 /*
@@ -337,11 +359,14 @@ Method          POST
 Bookman.post("/authors/new", (request, response) => {
     const { newAuthor } = request.body;
 
+    // CODE: before mongoDB
     // inserting newAuthor data into database.authors array
-    database.authors.push(newAuthor);
+    // database.authors.push(newAuthor);
 
+    const addNewAuthor = AuthorModel.create(newAuthor);
+
+    // return response.json({ authors: database.authors, message: "Author was added." });
     return response.json({
-        authors: database.authors,
         message: "Author was added.",
     });
 });
@@ -403,8 +428,11 @@ Access          PUBLIC
 Parameters      NONE
 Method          GET
 */
-Bookman.get("/publications", (request, response) => {
-    return response.json({ publications: database.publications });
+Bookman.get("/publications", async (request, response) => {
+    const getAllPublications = await PublicationModel.find();
+
+    // return response.json({ publications: database.publications });
+    return response.json({ publications: getAllPublications });
 });
 
 /*
@@ -459,14 +487,17 @@ Access          PUBLIC
 Parameters      NONE
 Method          POST
 */
-Bookman.post("/publications/new", (request, response) => {
+Bookman.post("/publications/new", async (request, response) => {
     const { newPublication } = request.body;
 
+    // CODE: before mongoDB
     // inserting newPublication data into database.publications array
-    database.publications.push(newPublication);
+    // database.publications.push(newPublication);
 
+    const addNewPublication = await PublicationModel.create(newPublication);
+
+    // return response.json({ publications: database.publications, message: "Publication was added." });
     return response.json({
-        publications: database.publications,
         message: "Publication was added.",
     });
 });
