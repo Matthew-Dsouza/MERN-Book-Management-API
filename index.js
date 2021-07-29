@@ -1,6 +1,10 @@
+require("dotenv").config();
+
 // import express framework
-const { request, response } = require("express");
 const express = require("express");
+
+// import mongoose
+const mongoose = require("mongoose");
 
 // database
 const database = require("./database/index");
@@ -10,6 +14,16 @@ const Bookman = express();
 
 // configurations
 Bookman.use(express.json());
+
+// Establish Database Connection
+mongoose
+    .connect(process.env.MONGO_URL, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useFindAndModify: false,
+        useCreateIndex: true,
+    })
+    .then(() => console.log("Connection Established!"));
 
 /*
 Route           /books
@@ -526,7 +540,9 @@ Access          PUBLIC
 Parameters      isbn, publication-id
 Method          DELETE
 */
-Bookman.delete("/publications/book/delete/:bookISBN/:publicationID", async (request, response) => {
+Bookman.delete(
+    "/publications/book/delete/:bookISBN/:publicationID",
+    async (request, response) => {
         // update publication database
         database.publications.forEach((publication) => {
             if (publication.id === parseInt(request.params.publicationID)) {
