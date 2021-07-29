@@ -171,6 +171,80 @@ Bookman.put("/books/author/update/:isbn", async (request, response) => {
     });
 });
 
+/*
+Route           /books/delete
+Description     to delete a book
+Access          PUBLIC
+Parameters      isbn
+Method          DELETE
+*/
+// NOTE: Modify this code to update the author database as well when book is deleted
+Bookman.delete("/books/delete/:bookISBN", (request, response) => {
+    // update book database
+    const updatedBookDatabase = database.books.filter(
+        (book) => book.ISBN !== request.params.bookISBN
+    );
+
+    database.books = updatedBookDatabase;
+
+    // update author database
+
+    return response.json({
+        books: database.books,
+        message: `Book ${request.params.bookISBN} was deleted from book database.`,
+    });
+});
+
+/*
+Route           /books/author/delete
+Description     to delete an author from a book
+Access          PUBLIC
+Parameters      isbn
+Method          DELETE
+*/
+Bookman.delete("/books/author/delete/:bookISBN", async (request, response) => {
+    // update book database
+    database.books.forEach((book) => {
+        if (book.ISBN === request.params.bookISBN) {
+            const updatedAuthorList = book.authors.filter(
+                (bookAuthor) => bookAuthor !== request.body.removeAuthorID
+            );
+
+            book.authors = updatedAuthorList;
+
+            return book;
+        } else {
+            return book;
+        }
+    });
+
+    /* NOTE: You don't need to assign the changed database.books to updatedBookDatabase 
+             since in forEach all changes are made directly to database.books 
+    */
+    // database.books = updatedBookDatabase;
+
+    // update author database
+    database.authors.forEach((author) => {
+        if (author.id === request.body.removeAuthorID) {
+            const updatedBooksList = author.books.filter(
+                (authorBook) => authorBook !== request.params.bookISBN
+            );
+
+            author.books = updatedBooksList;
+
+            return author;
+        } else {
+            return author;
+        }
+    });
+
+    return response.json({
+        books: database.books,
+        authors: database.authors,
+        message: `Author ${request.body.removeAuthorID} was removed from Book ${request.params.bookISBN}`,
+    });
+});
+
 // .
 
 // .
@@ -276,6 +350,27 @@ Bookman.put("/authors/update/:authorID", async (request, response) => {
     });
 });
 
+/*
+Route           /authors/delete
+Description     to delete an author 
+Access          PUBLIC
+Parameters      author-id
+Method          DELETE
+*/
+Bookman.delete("/authors/delete/:authorID", (request, response) => {
+    // update author database
+    const updatedAuthorDatabase = database.authors.filter(
+        (author) => author.id !== parseInt(request.params.authorID)
+    );
+
+    database.authors = updatedAuthorDatabase;
+
+    return response.json({
+        authors: database.authors,
+        message: "Author was deleted from author database.",
+    });
+});
+
 // .
 
 // .
@@ -364,7 +459,9 @@ Access          PUBLIC
 Parameters      publication-id
 Method          PUT
 */
-Bookman.put("/publications/update/:publicationID", async (request, response) => {
+Bookman.put(
+    "/publications/update/:publicationID",
+    async (request, response) => {
         database.publications.forEach((publication) => {
             if (String(publication.id) === request.params.publicationID) {
                 publication.name = request.body.UpdatePublicationName;
@@ -388,29 +485,28 @@ Access          PUBLIC
 Parameters      isbn
 Method          PUT
 */
-Bookman.put("/publications/book/update/:bookISBN", async (request, response) => {
+Bookman.put(
+    "/publications/book/update/:bookISBN",
+    async (request, response) => {
         // update publication database
         database.publications.forEach((publication) => {
-            if ((publication.id === request.body.updatedPublicationID) && (publication.books.includes(request.params.bookISBN) == false)) 
-            {
+            if (
+                publication.id === request.body.updatedPublicationID &&
+                publication.books.includes(request.params.bookISBN) == false
+            ) {
                 publication.books.push(request.params.bookISBN);
                 return publication;
-            } 
-            else 
-            {
+            } else {
                 return publication;
             }
         });
 
         // update book database
         database.books.forEach((book) => {
-            if (book.ISBN === request.params.bookISBN) 
-            {
+            if (book.ISBN === request.params.bookISBN) {
                 book.publication = request.body.updatedPublicationID;
                 return book;
-            } 
-            else 
-            {
+            } else {
                 return book;
             }
         });
@@ -422,6 +518,70 @@ Bookman.put("/publications/book/update/:bookISBN", async (request, response) => 
         });
     }
 );
+
+/*
+Route           /publications/book/delete
+Description     to delete a book from a publication  
+Access          PUBLIC
+Parameters      isbn, publication-id
+Method          DELETE
+*/
+Bookman.delete("/publications/book/delete/:bookISBN/:publicationID", async (request, response) => {
+        // update publication database
+        database.publications.forEach((publication) => {
+            if (publication.id === parseInt(request.params.publicationID)) {
+                const updatedPublicationBooksList = publication.books.filter(
+                    (publicationBook) =>
+                        publicationBook !== request.params.bookISBN
+                );
+
+                publication.books = updatedPublicationBooksList;
+
+                return publication;
+            } else {
+                return publication;
+            }
+        });
+
+        // update book database
+        database.books.forEach((book) => {
+            if (book.ISBN === request.params.bookISBN) {
+                book.publication = "N/A"; //Not Announced i.e No publication
+
+                return book;
+            } else {
+                return book;
+            }
+        });
+
+        return response.json({
+            publications: database.publications,
+            books: database.books,
+            message: `Book ${request.params.bookISBN} was deleted from Publication ${request.params.publicationID}`,
+        });
+    }
+);
+
+/*
+Route           /publications/delete
+Description     to delete a publication 
+Access          PUBLIC
+Parameters      publication-id
+Method          DELETE
+*/
+Bookman.delete("/publications/delete/:publicationID", (request, response) => {
+    const updatedPublicationDatabase = database.publications.filter(
+        (publication) =>
+            publication.id !== parseInt(request.params.publicationID)
+    );
+
+    database.publications = updatedPublicationDatabase;
+
+    return response.json({
+        publications: database.publications,
+        message: "Publication was deleted.",
+    });
+});
 
 // .
 

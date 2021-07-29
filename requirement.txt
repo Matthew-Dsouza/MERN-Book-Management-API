@@ -35,8 +35,8 @@ to update book details (in this case, we will only consider the book title but o
 to update/add new author ✅
 
 DELETE
-to delete a book 
-to delete a author from a book
+to delete a book ✅
+to delete an author from a book ✅
 
 
 -----------------------------------
@@ -58,7 +58,7 @@ PUT
 to update author details (in this case, we will only consider the author name but others can be done similarly) ✅
 
 DELETE
-to delete an author
+to delete an author ✅
 
 
 -----------------------------------
@@ -78,10 +78,10 @@ to post new publication ✅
 
 PUT
 to update publication details (in this case, we will only consider the publication name but others can be done similarly) ✅
-to update/add new book to a publication
+to update/add new book to a publication ✅
 
 
 DELETE
-to delete a book from a publication
-to delete a publication
+to delete a book from a publication ✅
+to delete a publication ✅
 
