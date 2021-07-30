@@ -25,18 +25,18 @@ GET
 to get all books ✅ 🎁
 to get specific book based on ISBN ✅ 🎁
 to get a list of books based on category ✅ 🎁
-to get a list of books based on author ✅ 🥊
+to get a list of books based on author ✅ 🎁
 
 POST
 to post new book ✅ 🎁
 
 PUT
-to update book details (in this case, we will only consider the book title but others can be done similarly) ✅
-to update/add new author ✅
+to update book details (in this case, we will only consider the book title but others can be done similarly) ✅ 🎁
+to update/add new author ✅ 🎁
 
 DELETE
-to delete a book ✅
-to delete an author from a book ✅
+to delete a book ✅ 🎁
+to delete an author from a book ✅ 🎁
 
 
 -----------------------------------
@@ -48,17 +48,17 @@ We need an API
 
 GET
 to get all authors ✅ 🎁
-to get specific author based on author id ✅ 🥊
-to get a list of authors based on book ✅ 🥊
+to get specific author based on author id ✅ 🎁
+to get a list of authors based on book ✅ 🎁
 
 POST
 to post new author ✅ 🎁
 
 PUT
-to update author details (in this case, we will only consider the author name but others can be done similarly) ✅
+to update author details (in this case, we will only consider the author name but others can be done similarly) ✅ 🎁
 
 DELETE
-to delete an author ✅
+to delete an author ✅ 🎁
 
 
 -----------------------------------
@@ -70,18 +70,17 @@ We need an API
 
 GET
 to get all publications ✅ 🎁
-to get specific publication based on publication id ✅ 🥊
-to get a specific publication based on book ✅ 🥊
-
+to get specific publication based on publication id ✅ 🎁
+to get a specific publication based on book ✅ 🎁
 POST
 to post new publication ✅ 🎁
 
 PUT
-to update publication details (in this case, we will only consider the publication name but others can be done similarly) ✅
-to update/add new book to a publication ✅
+to update publication details (in this case, we will only consider the publication name but others can be done similarly) ✅ 🎁
+to update/add new book to a publication ✅ 🎁
 
 
 DELETE
-to delete a book from a publication ✅
-to delete a publication ✅
+to delete a book from a publication ✅ 🥊
+to delete a publication ✅ 🥊
 
