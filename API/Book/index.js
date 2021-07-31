@@ -17,9 +17,6 @@ Method          GET
 Router.get("/", async (_request, response) => {
     const getAllBooks = await BookModel.find();
 
-    // CODE: before mongoDB
-    // return response.json({ books: database.books });
-
     return response.json({ books: getAllBooks });
 });
 
@@ -35,11 +32,6 @@ Router.get("/id/:isbn", async (request, response) => {
     const getSpecificBook = await BookModel.findOne({
         ISBN: request.params.isbn,
     });
-
-    // CODE: before mongoDB
-    // const getSpecificBook = await database.books.filter(
-    //     (book) => book.ISBN === request.params.isbn
-    // );
 
     // error handling if book is not found
     if (!getSpecificBook) {
@@ -127,16 +119,15 @@ Method          POST
 */
 // MongoDB Optimized
 Router.post("/new", async (request, response) => {
-    const { newBook } = request.body;
+    try {
+        const { newBook } = request.body;
 
-    // CODE: before mongoDB
-    // inserting newBook data into database.books array
-    // database.books.push(newBook);
+        await BookModel.create(newBook);
 
-    const addNewBook = BookModel.create(newBook);
-
-    // return response.json({ books: database.books, message: "Book was added." });
-    return response.json({ message: "New Book was added." });
+        return response.json({ message: "New Book was added." });
+    } catch (error) {
+        return response.json({ error: error.message });
+    }
 });
 
 /*
@@ -149,28 +140,12 @@ Method          PUT
 // NOTE: Had faced a horrible bug with this little devil.
 // MongoDB Optimized
 Router.put("/update/:isbn", async (request, response) => {
-    // CODE: before mongoDB
-    // database.books.forEach((book) => {
-    // if (book.ISBN === request.params.isbn) {
-    //     book.title = request.body.updatedBookTitle;
-    //     return book;
-    // }
-    // // error handling
-    // else {
-    //     return book;
-    // }
-
     // .findOneAndUpdate({find one}, {and update}, {to display the updated data instead of old data})
     const updatedBook = await BookModel.findOneAndUpdate(
         { ISBN: request.params.isbn },
         { title: request.body.updatedBookTitle },
         { new: true }
     );
-
-    // return response.json({
-    //     books: database.books,
-    //     message: "Book title was updated.",
-    // });
 
     return response.json({
         books: updatedBook,

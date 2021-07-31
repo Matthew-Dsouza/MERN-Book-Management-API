@@ -98,19 +98,19 @@ Parameters      NONE
 Method          POST
 */
 // MongoDB Optimized
-Router.post("/new", (request, response) => {
-    const { newAuthor } = request.body;
+Router.post("/new", async (request, response) => {
+    try {
+        const { newAuthor } = request.body;
 
-    // CODE: before mongoDB
-    // inserting newAuthor data into database.authors array
-    // database.authors.push(newAuthor);
+        await AuthorModel.create(newAuthor);
 
-    const addNewAuthor = AuthorModel.create(newAuthor);
-
-    // return response.json({ authors: database.authors, message: "Author was added." });
-    return response.json({
-        message: "Author was added.",
-    });
+        // return response.json({ authors: database.authors, message: "Author was added." });
+        return response.json({
+            message: "Author was added.",
+        });
+    } catch (error) {
+        return response.json({ error: error.message });
+    }
 });
 
 /*

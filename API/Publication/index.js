@@ -98,18 +98,17 @@ Method          POST
 */
 // MongoDB Optimized
 Router.post("/new", async (request, response) => {
-    const { newPublication } = request.body;
+    try {
+        const { newPublication } = request.body;
 
-    // CODE: before mongoDB
-    // inserting newPublication data into database.publications array
-    // database.publications.push(newPublication);
+        const addNewPublication = await PublicationModel.create(newPublication);
 
-    const addNewPublication = await PublicationModel.create(newPublication);
-
-    // return response.json({ publications: database.publications, message: "Publication was added." });
-    return response.json({
-        message: "Publication was added.",
-    });
+        return response.json({
+            message: "Publication was added.",
+        });
+    } catch (error) {
+        return response.json({ error: error.message });
+    }
 });
 
 /*

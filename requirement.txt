@@ -84,3 +84,10 @@ DELETE
 to delete a book from a publication ✅ 🎁
 to delete a publication ✅ 🎁
 
+
+
+Add mongoose validation to all models:
+BookSchema ✅
+AuthorSchema ✅
+PublicationSchema ✅
+
