@@ -6,8 +6,7 @@
 // // import mongoose
 // const mongoose = require("mongoose");
 
-// // database
-// // CODE: before mongoDB
+// // Database
 // // const database = require("./database/index");
 
 // // models
@@ -498,18 +497,34 @@
 // Parameters      author-id
 // Method          PUT
 // */
+// // MongoDB Optimized
 // Bookman.put("/authors/update/:authorID", async (request, response) => {
-//     database.authors.forEach((author) => {
-//         if (String(author.id) === request.params.authorID) {
-//             author.name = request.body.UpdateAuthorName;
-//             return author;
-//         } else {
-//             return author;
-//         }
-//     });
+//     // database.authors.forEach((author) => {
+//     //     if (String(author.id) === request.params.authorID) {
+//     //         author.name = request.body.UpdateAuthorName;
+//     //         return author;
+//     //     } else {
+//     //         return author;
+//     //     }
+//     // });
+
+//     const updatedAuthor = await AuthorModel.findOneAndUpdate(
+//         {
+//             id: parseInt(request.params.authorID),
+//         },
+//         {
+//             name: request.body.UpdateAuthorName,
+//         },
+//         { new: true }
+//     );
+
+//     // return response.json({
+//     //     authors: database.authors,
+//     //     message: "Author name was updated.",
+//     // });
 
 //     return response.json({
-//         authors: database.authors,
+//         authors: updatedAuthor,
 //         message: "Author name was updated.",
 //     });
 // });
@@ -521,17 +536,26 @@
 // Parameters      author-id
 // Method          DELETE
 // */
-// Bookman.delete("/authors/delete/:authorID", (request, response) => {
+// // MongoDB Optimized
+// Bookman.delete("/authors/delete/:authorID", async (request, response) => {
 //     // update author database
-//     const updatedAuthorDatabase = database.authors.filter(
-//         (author) => author.id !== parseInt(request.params.authorID)
-//     );
+//     // const updatedAuthorDatabase = database.authors.filter(
+//     //     (author) => author.id !== parseInt(request.params.authorID)
+//     // );
 
-//     database.authors = updatedAuthorDatabase;
+//     // database.authors = updatedAuthorDatabase;
+
+//     await AuthorModel.findOneAndDelete({
+//         id: parseInt(request.params.authorID),
+//     });
+
+//     // return response.json({
+//     //     authors: database.authors,
+//     //     message: `Author ${request.params.authorID} was deleted from author database.`,
+//     // });
 
 //     return response.json({
-//         authors: database.authors,
-//         message: "Author was deleted from author database.",
+//         message: `Author ${request.params.authorID} was deleted from author database.`,
 //     });
 // });
 
@@ -655,20 +679,34 @@
 // Parameters      publication-id
 // Method          PUT
 // */
-// Bookman.put(
-//     "/publications/update/:publicationID",
-//     async (request, response) => {
-//         database.publications.forEach((publication) => {
-//             if (String(publication.id) === request.params.publicationID) {
-//                 publication.name = request.body.UpdatePublicationName;
-//                 return publication;
-//             } else {
-//                 return publication;
-//             }
-//         });
+// // MongoDB Optimized
+// Bookman.put("/publications/update/:publicationID", async (request, response) => {
+//         // database.publications.forEach((publication) => {
+//         //     if (String(publication.id) === request.params.publicationID) {
+//         //         publication.name = request.body.UpdatePublicationName;
+//         //         return publication;
+//         //     } else {
+//         //         return publication;
+//         //     }
+//         // });
+
+//         const updatedPublication = await PublicationModel.findOneAndUpdate(
+//             {
+//                 id: parseInt(request.params.publicationID),
+//             },
+//             {
+//                 name: request.body.UpdatePublicationName,
+//             },
+//             { new: true }
+//         );
+
+//         // return response.json({
+//         //     publications: database.publications,
+//         //     message: "Publication name was updated.",
+//         // });
 
 //         return response.json({
-//             publications: database.publications,
+//             publication: updatedPublication,
 //             message: "Publication name was updated.",
 //         });
 //     }
@@ -681,36 +719,63 @@
 // Parameters      isbn
 // Method          PUT
 // */
-// Bookman.put(
-//     "/publications/book/update/:bookISBN",
-//     async (request, response) => {
+// // MongoDB Optimized
+// Bookman.put("/publications/book/update/:bookISBN", async (request, response) => {
 //         // update publication database
-//         database.publications.forEach((publication) => {
-//             if (
-//                 publication.id === request.body.updatedPublicationID &&
-//                 publication.books.includes(request.params.bookISBN) == false
-//             ) {
-//                 publication.books.push(request.params.bookISBN);
-//                 return publication;
-//             } else {
-//                 return publication;
-//             }
-//         });
+//         // database.publications.forEach((publication) => {
+//         //     if (
+//         //         publication.id === request.body.updatedPublicationID &&
+//         //         publication.books.includes(request.params.bookISBN) == false
+//         //     ) {
+//         //         publication.books.push(request.params.bookISBN);
+//         //         return publication;
+//         //     } else {
+//         //         return publication;
+//         //     }
+//         // });
+
+//         const updatedPublication = await PublicationModel.findOneAndUpdate(
+//             {
+//                 id: request.body.updatedPublicationID,
+//             },
+//             {
+//                 $addToSet: {
+//                     books: request.params.bookISBN,
+//                 },
+//             },
+//             { new: true }
+//         );
 
 //         // update book database
-//         database.books.forEach((book) => {
-//             if (book.ISBN === request.params.bookISBN) {
-//                 book.publication = request.body.updatedPublicationID;
-//                 return book;
-//             } else {
-//                 return book;
-//             }
-//         });
+//         // database.books.forEach((book) => {
+//         //     if (book.ISBN === request.params.bookISBN) {
+//         //         book.publication = request.body.updatedPublicationID;
+//         //         return book;
+//         //     } else {
+//         //         return book;
+//         //     }
+//         // });
+
+//         const updatedBook = await BookModel.findOneAndUpdate(
+//             {
+//                 ISBN: request.params.bookISBN,
+//             },
+//             {
+//                 publication: request.body.updatedPublicationID,
+//             },
+//             { new: true }
+//         );
+
+//         // return response.json({
+//         //     publications: database.publications,
+//         //     books: database.books,
+//         //     message: "Book Publication was updated.",
+//         // });
 
 //         return response.json({
-//             publications: database.publications,
-//             books: database.books,
-//             message: "Book Publication was updated.",
+//             publications: updatedPublication,
+//             books: updatedBook,
+//             message: `Book ${request.params.bookISBN} was added to Publication ${request.body.updatedPublicationID}.`,
 //         });
 //     }
 // );
@@ -722,39 +787,71 @@
 // Parameters      isbn, publication-id
 // Method          DELETE
 // */
-// Bookman.delete(
-//     "/publications/book/delete/:bookISBN/:publicationID",
-//     async (request, response) => {
+// // MongoDB Optimized
+// Bookman.delete("/publications/book/delete/:bookISBN/:publicationID", async (request, response) => {
 //         // update publication database
-//         database.publications.forEach((publication) => {
-//             if (publication.id === parseInt(request.params.publicationID)) {
-//                 const updatedPublicationBooksList = publication.books.filter(
-//                     (publicationBook) =>
-//                         publicationBook !== request.params.bookISBN
-//                 );
+//         // database.publications.forEach((publication) => {
+//         //     if (publication.id === parseInt(request.params.publicationID)) {
+//         //         const updatedPublicationBooksList = publication.books.filter(
+//         //             (publicationBook) =>
+//         //                 publicationBook !== request.params.bookISBN
+//         //         );
 
-//                 publication.books = updatedPublicationBooksList;
+//         //         publication.books = updatedPublicationBooksList;
 
-//                 return publication;
-//             } else {
-//                 return publication;
+//         //         return publication;
+//         //     } else {
+//         //         return publication;
+//         //     }
+//         // });
+
+//         const updatedPublication = await PublicationModel.findOneAndUpdate(
+//             {
+//                 id: request.params.publicationID,
+//             },
+//             {
+//                 $pull: {
+//                     books: request.params.bookISBN,
+//                 },
+//             },
+//             {
+//                 new: true,
 //             }
-//         });
+//         );
 
 //         // update book database
-//         database.books.forEach((book) => {
-//             if (book.ISBN === request.params.bookISBN) {
-//                 book.publication = "N/A"; //Not Announced i.e No publication
+//         // database.books.forEach((book) => {
+//         //     if (book.ISBN === request.params.bookISBN) {
+//         //         book.publication = "N/A"; //Not Announced i.e No publication
 
-//                 return book;
-//             } else {
-//                 return book;
+//         //         return book;
+//         //     } else {
+//         //         return book;
+//         //     }
+//         // });
+
+//         const updatedBook = await BookModel.findOneAndUpdate(
+//             {
+//                 ISBN: request.params.bookISBN,
+//             },
+//             {
+//                 // publication: "N/A",
+//                 publication: 0,
+//             },
+//             {
+//                 new: true,
 //             }
-//         });
+//         );
+
+//         // return response.json({
+//         //     publications: database.publications,
+//         //     books: database.books,
+//         //     message: `Book ${request.params.bookISBN} was deleted from Publication ${request.params.publicationID}`,
+//         // });
 
 //         return response.json({
-//             publications: database.publications,
-//             books: database.books,
+//             publications: updatedPublication,
+//             book: updatedBook,
 //             message: `Book ${request.params.bookISBN} was deleted from Publication ${request.params.publicationID}`,
 //         });
 //     }
@@ -767,19 +864,29 @@
 // Parameters      publication-id
 // Method          DELETE
 // */
-// Bookman.delete("/publications/delete/:publicationID", (request, response) => {
-//     const updatedPublicationDatabase = database.publications.filter(
-//         (publication) =>
-//             publication.id !== parseInt(request.params.publicationID)
-//     );
+// // MongoDB Optimized
+// Bookman.delete("/publications/delete/:publicationID", async (request, response) => {
+//         // const updatedPublicationDatabase = database.publications.filter(
+//         //     (publication) =>
+//         //         publication.id !== parseInt(request.params.publicationID)
+//         // );
 
-//     database.publications = updatedPublicationDatabase;
+//         // database.publications = updatedPublicationDatabase;
 
-//     return response.json({
-//         publications: database.publications,
-//         message: "Publication was deleted.",
-//     });
-// });
+//         await PublicationModel.findOneAndDelete({
+//             id: request.params.publicationID,
+//         });
+
+//         // return response.json({
+//         //     publications: database.publications,
+//         //     message: "Publication was deleted.",
+//         // });
+
+//         return response.json({
+//             message: `Publication ${request.params.publicationID} was deleted.`,
+//         });
+//     }
+// );
 
 // // .
 

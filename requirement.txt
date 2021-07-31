@@ -81,6 +81,6 @@ to update/add new book to a publication ✅ 🎁
 
 
 DELETE
-to delete a book from a publication ✅ 🥊
-to delete a publication ✅ 🥊
+to delete a book from a publication ✅ 🎁
+to delete a publication ✅ 🎁
 
