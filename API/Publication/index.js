@@ -3,6 +3,8 @@
 const Router = require("express").Router();
 
 // Database Model
+const BookModel = require("../../database/book");
+const AuthorModel = require("../../database/author");
 const PublicationModel = require("../../database/publication");
 
 /*

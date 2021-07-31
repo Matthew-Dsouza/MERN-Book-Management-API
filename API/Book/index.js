@@ -5,6 +5,8 @@ const Router = require("express").Router();
 
 // Database Model
 const BookModel = require("../../database/book");
+const AuthorModel = require("../../database/author");
+const PublicationModel = require("../../database/publication");
 
 /*
 Route           /books
@@ -28,7 +30,7 @@ Parameters      isbn
 Method          GET
 */
 // MongoDB Optimized
-Router.get("/id/:isbn", async (request, response) => {
+Router.get("/isbn/:isbn", async (request, response) => {
     const getSpecificBook = await BookModel.findOne({
         ISBN: request.params.isbn,
     });
@@ -163,14 +165,6 @@ Method          PUT
 // MongoDB Optimized
 Router.put("/author/update/:isbn", async (request, response) => {
     // update the book database
-    // database.books.forEach((book) => {
-    //     if (book.ISBN === request.params.isbn) {
-    //         book.authors.push(request.body.newAuthor);
-    //         return book;
-    //     } else {
-    //         return book;
-    //     }
-    // });
 
     const updatedBook = await BookModel.findOneAndUpdate(
         { ISBN: request.params.isbn },
@@ -183,14 +177,6 @@ Router.put("/author/update/:isbn", async (request, response) => {
     );
 
     // update the author database
-    // database.authors.forEach((author) => {
-    //     if (author.id === request.body.newAuthor) {
-    //         author.books.push(request.params.isbn);
-    //         return author;
-    //     } else {
-    //         return author;
-    //     }
-    // });
 
     const updatedAuthor = await AuthorModel.findOneAndUpdate(
         {
@@ -204,16 +190,10 @@ Router.put("/author/update/:isbn", async (request, response) => {
         { new: true }
     );
 
-    // return response.json({
-    //     books: database.books,
-    //     authors: database.authors,
-    //     message: "Author was updated.",
-    // });
-
     return response.json({
         books: updatedBook,
         authors: updatedAuthor,
-        message: "Author was updated.",
+        message: `Author ${request.body.newAuthor} was added to book ${request.params.isbn}`,
     });
 });
 
@@ -257,19 +237,6 @@ Method          DELETE
 // MongoDB Optimized
 Router.delete("/author/delete/:bookISBN", async (request, response) => {
     // update book database
-    // database.books.forEach((book) => {
-    //     if (book.ISBN === request.params.bookISBN) {
-    //         const updatedAuthorList = book.authors.filter(
-    //             (bookAuthor) => bookAuthor !== request.body.removeAuthorID
-    //         );
-
-    //         book.authors = updatedAuthorList;
-
-    //         return book;
-    //     } else {
-    //         return book;
-    //     }
-    // });
 
     const updatedBook = await BookModel.findOneAndUpdate(
         {
@@ -283,24 +250,7 @@ Router.delete("/author/delete/:bookISBN", async (request, response) => {
         { new: true }
     );
 
-    /* NOTE: You don't need to assign the changed database.books to updatedBookDatabase
-             since in forEach all changes are made directly to database.books */
-    // database.books = updatedBookDatabase;
-
     // update author database
-    // database.authors.forEach((author) => {
-    //     if (author.id === request.body.removeAuthorID) {
-    //         const updatedBooksList = author.books.filter(
-    //             (authorBook) => authorBook !== request.params.bookISBN
-    //         );
-
-    //         author.books = updatedBooksList;
-
-    //         return author;
-    //     } else {
-    //         return author;
-    //     }
-    // });
 
     const updatedAuthor = await AuthorModel.findOneAndUpdate(
         {

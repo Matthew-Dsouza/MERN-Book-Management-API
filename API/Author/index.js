@@ -3,7 +3,9 @@
 const Router = require("express").Router();
 
 // Database Model
+const BookModel = require("../../database/book");
 const AuthorModel = require("../../database/author");
+const PublicationModel = require("../../database/publication");
 
 /*
 Route           /authors
@@ -122,15 +124,6 @@ Method          PUT
 */
 // MongoDB Optimized
 Router.put("/update/:authorID", async (request, response) => {
-    // database.authors.forEach((author) => {
-    //     if (String(author.id) === request.params.authorID) {
-    //         author.name = request.body.UpdateAuthorName;
-    //         return author;
-    //     } else {
-    //         return author;
-    //     }
-    // });
-
     const updatedAuthor = await AuthorModel.findOneAndUpdate(
         {
             id: parseInt(request.params.authorID),
